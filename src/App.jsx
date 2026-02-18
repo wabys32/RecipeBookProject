@@ -205,6 +205,7 @@ function App() {
           onClose={() => setSelectedRecipe(null)}
           onUpdate={updateRecipe}
           onDelete={deleteRecipe}
+          onToggleFavorite={toggleFavorite}   // ← this line is critical!
         />
       )}
     </div>
