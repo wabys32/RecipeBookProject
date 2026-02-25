@@ -6,7 +6,7 @@ export default function RecipeCard({ recipe, onClick, onToggleFavorite, onIncrem
     return (
         <div
             onClick={onClick}
-            className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-700 group"
+            className="bg-white light:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group"
         >
             <div className="relative h-48 overflow-hidden">
                 {image ? (
@@ -27,7 +27,7 @@ export default function RecipeCard({ recipe, onClick, onToggleFavorite, onIncrem
                             e.stopPropagation()
                             onToggleFavorite(recipe.id)
                         }}
-                        className="p-2 bg-white/80 dark:bg-gray-900/80 rounded-full hover:bg-white dark:hover:bg-gray-800 transition"
+                        className="p-2 bg-white/80 light:bg-gray-900/80 rounded-full hover:bg-white dark:hover:bg-gray-800 transition"
                     >
                         <FiHeart className={isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600 dark:text-gray-300'} />
                     </button>

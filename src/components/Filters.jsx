@@ -13,7 +13,7 @@ export default function Filters({
     const categories = ['All', 'Breakfast', 'Main Course', 'Dessert', 'Vegetarian', 'Soup', 'Salad']
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mt-8 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white light:bg-gray-800 rounded-xl shadow-sm p-6 mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Поиск */}
                 <div className="relative">
@@ -23,12 +23,12 @@ export default function Filters({
                         placeholder="Поиск по названию..."
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 light:border-gray-600 rounded-lg bg-gray-50 light:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                     {searchTerm && (
                         <button
                             onClick={() => setSearchTerm('')}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 light:hover:text-gray-300"
                         >
                             <FiX />
                         </button>
@@ -39,7 +39,7 @@ export default function Filters({
                 <select
                     value={selectedCategory}
                     onChange={e => setSelectedCategory(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 border border-gray-300 light:border-gray-600 rounded-lg bg-gray-50 light:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                     {categories.map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
@@ -50,12 +50,12 @@ export default function Filters({
                 <select
                     value={sortBy}
                     onChange={e => setSortBy(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 border border-gray-300 light:border-gray-600 rounded-lg bg-gray-50 light:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
-                    <option value="rating-desc">По рейтингу ↓</option>
-                    <option value="rating-asc">По рейтингу ↑</option>
-                    <option value="name-asc">По названию А→Я</option>
-                    <option value="name-desc">По названию Я→А</option>
+                    <option value="rating-desc">By rating ↓</option>
+                    <option value="rating-asc">By rating ↑</option>
+                    <option value="name-asc">By name A-Z</option>
+                    <option value="name-desc">By name Z-A</option>
                 </select>
 
                 {/* Только избранное */}
@@ -63,11 +63,11 @@ export default function Filters({
                     onClick={() => setShowFavorites(!showFavorites)}
                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-colors ${showFavorites
                             ? 'bg-orange-100 border-orange-500 text-orange-700 dark:bg-orange-900/30 dark:border-orange-600 dark:text-orange-400'
-                            : 'border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        : 'border-gray-300 light:border-gray-600 hover:bg-gray-100 light:hover:bg-gray-700'
                         }`}
                 >
                     <FiStar className={showFavorites ? 'fill-current' : ''} />
-                    Только избранное
+                    Only Favorites
                 </button>
             </div>
         </div>
