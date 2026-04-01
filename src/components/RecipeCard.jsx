@@ -1,6 +1,7 @@
 import { FiHeart, FiStar } from 'react-icons/fi'
+import { memo } from 'react'
 
-export default function RecipeCard({ recipe, onClick, onToggleFavorite, onIncrementLikes }) {
+function RecipeCard({ recipe, onClick, onToggleFavorite, onIncrementLikes }) {
     const { title, category, rating, likes, isFavorite, image } = recipe
 
     return (
@@ -39,7 +40,7 @@ export default function RecipeCard({ recipe, onClick, onToggleFavorite, onIncrem
                     <h3 className="font-bold text-lg line-clamp-2">{title}</h3>
                     <div className="flex items-center gap-1 text-amber-500 font-medium">
                         <FiStar className="fill-current" />
-                        {rating.toFixed(1)}
+                        {Number(rating).toFixed(1)}   {/* ← SAFE FIX */}
                     </div>
                 </div>
 
@@ -65,3 +66,5 @@ export default function RecipeCard({ recipe, onClick, onToggleFavorite, onIncrem
         </div>
     )
 }
+
+export default memo(RecipeCard)

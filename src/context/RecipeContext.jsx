@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
+import { useFetch } from '../hooks/useFetch'
 
 const initialRecipes = [
     {
@@ -37,23 +38,50 @@ export const RecipeProvider = ({ children }) => {
     const [recipes, setRecipes] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
-    useEffect(() => {
-        setIsLoading(true)
-        const timer = setTimeout(() => {
-            const saved = localStorage.getItem('recipes')
-            if (saved) {
-                setRecipes(JSON.parse(saved))
-            } else {
-                setRecipes(initialRecipes)
-                localStorage.setItem('recipes', JSON.stringify(initialRecipes))
-            }
-            setIsLoading(false)
-        }, 800)
-        return () => clearTimeout(timer)
-    }, [])
+    // ===== TASK 2 + TASK 5: Real API integration =====
+    const API_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?f=a'
+    const { data: apiData, isLoading: fetchLoading, error: fetchError } = useFetch(API_URL)
 
     useEffect(() => {
-        if (recipes.length > 0) localStorage.setItem('recipes', JSON.stringify(recipes))
+        const saved = localStorage.getItem('recipes')
+        let currentRecipes = saved ? JSON.parse(saved) : initialRecipes
+
+        // If we have fresh data from TheMealDB API → merge it with user's recipes
+        if (apiData?.meals) {
+            const apiRecipes = apiData.meals.map((meal) => ({
+                id: Number(meal.idMeal),
+                title: meal.strMeal,
+                category: meal.strCategory || 'Main Course',
+                ingredients: Array.from({ length: 20 }, (_, i) => meal[`strIngredient${i + 1}`])
+                    .filter(Boolean)
+                    .join('\n'),
+                instructions: meal.strInstructions || 'Инструкции не указаны.',
+                rating: 4 + Math.random(),
+                likes: Math.floor(Math.random() * 60) + 10,
+                isFavorite: false,
+                image: meal.strMealThumb || ''
+            }))
+
+            // Merge: keep all user recipes + add API recipes that don't exist yet
+            const existingTitles = new Set(currentRecipes.map(r => r.title.toLowerCase()))
+            const newApiRecipes = apiRecipes.filter(r => !existingTitles.has(r.title.toLowerCase()))
+
+            currentRecipes = [...currentRecipes, ...newApiRecipes]
+        }
+        // If API failed, keep user's recipes (or initial ones)
+
+        setRecipes(currentRecipes)
+        setIsLoading(fetchLoading)
+
+        // Save merged list back to localStorage
+        localStorage.setItem('recipes', JSON.stringify(currentRecipes))
+    }, [apiData, fetchError, fetchLoading])
+
+    // Save changes when user adds/edits/deletes
+    useEffect(() => {
+        if (recipes.length > 0) {
+            localStorage.setItem('recipes', JSON.stringify(recipes))
+        }
     }, [recipes])
 
     const addRecipe = (newRecipe) => {
@@ -79,7 +107,13 @@ export const RecipeProvider = ({ children }) => {
 
     return (
         <RecipeContext.Provider value={{
-            recipes, isLoading, addRecipe, updateRecipe, deleteRecipe, toggleFavorite, incrementLikes
+            recipes,
+            isLoading,
+            addRecipe,
+            updateRecipe,
+            deleteRecipe,
+            toggleFavorite,
+            incrementLikes
         }}>
             {children}
         </RecipeContext.Provider>

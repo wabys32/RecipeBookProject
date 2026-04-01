@@ -160,7 +160,8 @@ export default function RecipeModal({
                                     <FiHeart className="fill-current" /> {recipe.likes}
                                 </span>
                                 <span className="px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full flex items-center gap-1">
-                                    <FiStar className="fill-current" /> {recipe.rating.toFixed(1)}
+                                    <FiStar className="fill-current" />
+                                    {Number(recipe.rating).toFixed(1)}   {/* ← SAFE FIX */}
                                 </span>
                             </div>
 
@@ -183,8 +184,8 @@ export default function RecipeModal({
                                 <button
                                     onClick={() => onToggleFavorite(recipe.id)}
                                     className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 border-2 ${recipe.isFavorite
-                                            ? 'border-red-500 text-red-600 hover:bg-red-50'
-                                            : 'border-gray-400 hover:border-red-500 hover:text-red-600'
+                                        ? 'border-red-500 text-red-600 hover:bg-red-50'
+                                        : 'border-gray-400 hover:border-red-500 hover:text-red-600'
                                         }`}
                                 >
                                     <FiHeart className={recipe.isFavorite ? 'fill-red-500' : ''} />
