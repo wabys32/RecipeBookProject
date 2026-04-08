@@ -1,15 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useContext } from 'react'
 import { RecipeContext } from '../context/RecipeContext'
 import { useForm } from '../hooks/useForm'
-
-// replaced useState with useForm
 
 const initialForm = {
     title: '',
     category: 'Breakfast',
     rating: '',
-    image: '',
     ingredients: '',
     instructions: '',
     tags: []
@@ -21,8 +18,12 @@ const possibleTags = ['Quick', 'Healthy', 'Spicy', 'Easy', 'Family', 'Party']
 export default function RecipeForm({ onSuccess }) {
     const { addRecipe } = useContext(RecipeContext)
 
-    // ✅ Use custom hook useForm
+    // ✅ Кастомный хук useForm (controlled fields)
     const { form, handleChange, setField, resetForm } = useForm(initialForm)
+
+    // ✅ useRef для неуправляемого поля (uncontrolled) — Задача 4
+    const imageRef = useRef(null)
+
     const [errors, setErrors] = useState({})
 
     const validateField = (name, value) => {
@@ -49,9 +50,9 @@ export default function RecipeForm({ onSuccess }) {
     const handleTagToggle = (tag) => {
         const current = form.tags || []
         const newTags = current.includes(tag)
-            ? current.filter((t) => t !== tag)
+            ? current.filter(t => t !== tag)
             : [...current, tag]
-        setField('tags', newTags)        // uses hook
+        setField('tags', newTags)
     }
 
     const validate = () => {
@@ -69,22 +70,26 @@ export default function RecipeForm({ onSuccess }) {
 
         if (Object.values(validationErrors).some(err => err !== '')) return
 
+        // Получаем значение из uncontrolled поля (imageRef)
+        const imageValue = imageRef.current ? imageRef.current.value : ''
+
         addRecipe({
             ...form,
+            image: imageValue,
             ingredients: form.ingredients.trim(),
             instructions: form.instructions.trim(),
             rating: Number(form.rating),
             tags: form.tags
         })
 
-        resetForm()        // ← important: use hook's reset
+        resetForm()
         setErrors({})
         if (onSuccess) onSuccess()
     }
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Title - full width */}
+            {/* Title */}
             <div>
                 <label className="block mb-1.5 font-medium">Название *</label>
                 <input
@@ -96,7 +101,7 @@ export default function RecipeForm({ onSuccess }) {
                 {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
             </div>
 
-            {/* Row 1: Category + Rating */}
+            {/* Category + Rating */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label className="block mb-1.5 font-medium">Категория</label>
@@ -126,19 +131,18 @@ export default function RecipeForm({ onSuccess }) {
                 </div>
             </div>
 
-            {/* Image - full width */}
+            {/* ===== TASK 4: Uncontrolled field (useRef) ===== */}
             <div>
-                <label className="block mb-1.5 font-medium">Ссылка на фото</label>
+                <label className="block mb-1.5 font-medium">Ссылка на фото (uncontrolled)</label>
                 <input
-                    name="image"
-                    value={form.image}
-                    onChange={handleChange}
+                    ref={imageRef}
+                    defaultValue={form.image}
                     placeholder="https://..."
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                 />
             </div>
 
-            {/* Row 2: Ingredients + Instructions */}
+            {/* Ingredients + Instructions */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
                     <label className="block mb-1.5 font-medium">Ингредиенты (каждый с новой строки) *</label>

@@ -4,13 +4,16 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 import { RecipeProvider } from './context/RecipeContext'
+import { AuthProvider } from './context/AuthContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <RecipeProvider>
-        <App />
-      </RecipeProvider>
+      <AuthProvider>          {/* ← NEW */}
+        <RecipeProvider>
+          <App />
+        </RecipeProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 )

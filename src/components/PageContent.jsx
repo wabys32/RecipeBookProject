@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { RecipeContext } from '../context/RecipeContext'
 import { useFilter } from '../hooks/useFilter' 
 import RecipeCard from './RecipeCard'
+import RecipeCardCompound from './RecipeCardCompound'
 
 export default function PageContent({
     searchTerm, selectedCategory, sortBy, showFavorites, onRecipeClick
@@ -23,13 +24,25 @@ export default function PageContent({
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {filteredRecipes.map(recipe => (
-                <RecipeCard
+                // <RecipeCard
+                //     key={recipe.id}
+                //     recipe={recipe}
+                //     onClick={() => onRecipeClick(recipe)}
+                //     onToggleFavorite={toggleFavorite}
+                //     onIncrementLikes={incrementLikes}
+                // />
+                <RecipeCardCompound
                     key={recipe.id}
                     recipe={recipe}
                     onClick={() => onRecipeClick(recipe)}
-                    onToggleFavorite={toggleFavorite}
-                    onIncrementLikes={incrementLikes}
-                />
+                >
+                    <RecipeCardCompound.Header />
+                    <RecipeCardCompound.Body />
+                    <RecipeCardCompound.Footer
+                        onToggleFavorite={onToggleFavorite}
+                        onIncrementLikes={onIncrementLikes}
+                    />
+                </RecipeCardCompound>
             ))}
         </div>
     )

@@ -1,16 +1,224 @@
-# React + Vite
+Задача один. Реализация Render Props
+Тема: Render Props
+Условие:
+Создать компонент, который принимает функцию в качестве дочернего элемента.
+Компонент должен управлять состоянием и передавать его функции для рендеринга
+интерфейса. Использовать Render Props для отображения списка задач, рецептов или
+фильмов с возможностью фильтрации и сортировки.
+Входные данные: массив элементов и функция рендера
+Выходные данные: интерфейс отображает отфильтрованные и отсортированные
+элементы
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Новый: src/components/RecipeListRenderProps.jsx
+Изменён: src/pages/Recipes.jsx
 
-## React Compiler
+Создан компонент RecipeListRenderProps, который принимает children как функцию. Внутри него находится всё состояние фильтров + useFilter.
+Как работает:
+jsx<RecipeListRenderProps recipes={recipes}>
+  {({ filteredRecipes, searchTerm, setSearchTerm, ... }) => (
+    <> ...фильтры и список... </>
+  )}
+</RecipeListRenderProps>
+Теперь логика фильтрации/сортировки вынесена из страницы и передаётся через render prop.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+# ============================
+
+Задача два. Higher Order Component для авторизации
+Тема: Higher Order Components
+Условие:
+Создать HOC с проверкой авторизации пользователя. Компонент должен оборачивать
+страницы или компоненты и отображать доступ только авторизованным пользователям,
+остальные видят сообщение об ограничении доступа.
+Входные данные: флаг isAuthenticated в глобальном состоянии
+Выходные данные: отображение компонента или сообщения об ограничении
+
+
+
+Файлы:
+Новый: src/context/AuthContext.jsx
+Новый: src/hoc/withAuth.jsx
+Изменён: src/pages/Profile.jsx
+
+Добавлен глобальный AuthContext
+Создан HOC withAuth
+Страница Profile обёрнута в HOC
+
+Как работает:
+Если isAuthenticated === false → показывается сообщение «Доступ ограничен» + кнопка «Войти».
+Если true → отображается профиль.
+В main.jsx добавлен <AuthProvider>.
+
+# ===========================================
+Задача три. Compound Components для карточек
+Тема: Compound Components
+Условие:
+Создать компонент карточки, который состоит из дочерних компонентов Header, Body и
+Footer. Карточка должна быть управляемой через Context внутри компонента, чтобы
+дочерние элементы могли обмениваться состоянием, например открытие модального
+окна или отметка выполнено.
+Входные данные: массив элементов и действия пользователя
+Выходные данные: карточки отображаются, дочерние компоненты корректно
+взаимодействуют друг с другом
+
+
+
+
+Файлы:
+
+Новый: src/components/RecipeCardCompound.jsx
+
+Карточка рецепта разбита на составные части: Header, Body, Footer.
+Внутри используется внутренний CardContext.
+Как работает:
+jsx<RecipeCardCompound recipe={recipe} onClick={...}>
+  <RecipeCardCompound.Header />
+  <RecipeCardCompound.Body />
+  <RecipeCardCompound.Footer ... />
+</RecipeCardCompound>
+Дочерние компоненты общаются через Context (например, состояние избранного).
+
+
+
+# ====================================
+Задача четыре. Controlled and Uncontrolled Hybrid Components
+Тема: Forms and Controlled Components
+Условие:
+Создать форму, часть полей которой управляется через состояние компонента, а часть
+через рефы. Реализовать синхронизацию данных и корректную валидацию для обоих
+типов полей.
+Входные данные: ввод данных в поля формы
+Выходные данные: состояние формы обновляется и валидация срабатывает корректно
+
+
+
+Файлы:
+
+Изменён: src/components/RecipeForm.jsx
+
+Большинство полей — controlled (через useForm)
+Поле «Ссылка на фото» — uncontrolled (через useRef)
+
+Как работает:
+jsxconst imageRef = useRef(null);
+// ...
+<input ref={imageRef} defaultValue={form.image} />
+При submit значение берётся из imageRef.current.value.
+
+
+# =======================================================
+Задача пять. Lazy Compound Components
+Тема: Compound Components и Lazy Loading
+Условие:
+Разделить крупные компоненты карточек и модальные окна на отдельные ленивые
+компоненты. Использовать React.lazy и Suspense для их загрузки только при
+необходимости.
+Входные данные: открытие модального окна или рендер карточки
+Выходные данные: компонент загружается динамически без замедления интерфейса
+
+
+
+Файлы:
+
+Изменён: src/pages/Recipes.jsx
+
+Модальное окно деталей рецепта сделано ленивым (React.lazy + Suspense).
+Как работает:
+jsxconst LazyRecipeModal = lazy(() => import('../components/RecipeModal'))
+
+{selectedRecipe && (
+  <Suspense fallback={<div>Загрузка рецепта...</div>}>
+    <LazyRecipeModal ... />
+  </Suspense>
+)}
+Модалка загружается только при открытии карточки.
+
+
+
+# ===============================================
+Задача шесть. Тестирование Render Props
+Тема: Testing React Applications
+Условие:
+Написать тесты для компонента с Render Props. Проверить, что функция рендера
+вызывается с правильными параметрами и интерфейс обновляется корректно при
+изменении состояния.
+Входные данные: имитация изменения состояния
+Выходные данные: интерфейс отображает корректные данные, функция рендера
+вызывается с правильными аргументами
+
+
+Тестирование Render Props → src/components/RecipeListRenderProps.test.jsx
+
+
+# ===============================================
+Задача семь. Тестирование Higher Order Component
+Тема: Testing React Applications
+Условие:
+Написать тесты для HOC авторизации. Проверить, что авторизованный пользователь
+видит компонент, а неавторизованный видит сообщение об ограничении доступа.
+Входные данные: флаг isAuthenticated true и false
+Выходные данные: компонент отображается согласно состоянию авторизации
+
+
+Тестирование HOC → src/hoc/withAuth.test.jsx
+
+
+# ===============================================
+Задача восемь. Тестирование Compound Components
+Тема: Testing React Applications
+Условие:
+Написать тесты для карточек с Compound Components. Проверить взаимодействие
+дочерних компонентов, открытие модального окна, отметку элементов и правильное
+отображение информации.
+
+Входные данные: клики и изменения состояния
+Выходные данные: дочерние компоненты реагируют корректно, интерфейс
+обновляется
+
+
+
+
+Тестирование Compound Components → src/components/RecipeCardCompound.test.jsx
+
+# ===========================================
+Задача девять. Тестирование формы с гибридными компонентами
+Тема: Testing React Applications
+Условие:
+Написать тесты для формы с управляемыми и неуправляемыми полями. Проверить
+корректность синхронизации данных и валидации.
+Входные данные: ввод данных и сброс формы
+Выходные данные: состояние формы корректно обновляется, ошибки отображаются
+корректно
+
+
+Тестирование гибридной формы → src/components/RecipeForm.test.jsx (обновлённый)
+
+
+# ============================================
+Задача десять. Интеграционное тестирование проекта
+Тема: Testing React Applications
+Условие:
+Написать интеграционные тесты для страницы проекта. Проверить добавление,
+редактирование, удаление элементов, фильтры, сортировку и отображение модальных
+окон. Использовать mock API для имитации асинхронных действий.
+Входные данные: действия пользователя по интерфейсу
+Выходные данные: состояние интерфейса и данных обновляется корректно, все
+элементы отображаются согласно ожиданиям
+
+
+Интеграционное тестирование страницы Recipes → src/pages/Recipes.test.jsx
+
+
+
+
+Все тесты проверяют:
+
+Корректную передачу данных в render prop
+Поведение HOC при isAuthenticated: true/false
+Взаимодействие дочерних компонентов Compound Card
+Синхронизацию controlled + uncontrolled полей
+Полный цикл: добавление → фильтрация → открытие модалки
