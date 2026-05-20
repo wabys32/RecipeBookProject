@@ -1,225 +1,184 @@
-Задача один. Реализация Render Props
-Тема: Render Props
-Условие:
-Создать компонент, который принимает функцию в качестве дочернего элемента.
-Компонент должен управлять состоянием и передавать его функции для рендеринга
-интерфейса. Использовать Render Props для отображения списка задач, рецептов или
-фильмов с возможностью фильтрации и сортировки.
-Входные данные: массив элементов и функция рендера
-Выходные данные: интерфейс отображает отфильтрованные и отсортированные
-элементы
+# Recipe Book Defense Notes
 
+## One-Minute Project Summary
 
+This project is a unified recipe management application. The user can browse recipes, filter and sort them, open recipe details, add a new recipe through a validated form, edit or delete recipes, mark recipes as favorites, like recipes, and view profile statistics. The application uses React Router for navigation, Context API for global state, custom hooks for reusable logic, and an external recipe API synchronized with local state.
 
-Новый: src/components/RecipeListRenderProps.jsx
-Изменён: src/pages/Recipes.jsx
+## Mandatory Requirements
 
-Создан компонент RecipeListRenderProps, который принимает children как функцию. Внутри него находится всё состояние фильтров + useFilter.
-Как работает:
-jsx<RecipeListRenderProps recipes={recipes}>
-  {({ filteredRecipes, searchTerm, setSearchTerm, ... }) => (
-    <> ...фильтры и список... </>
-  )}
-</RecipeListRenderProps>
-Теперь логика фильтрации/сортировки вынесена из страницы и передаётся через render prop.
+| Requirement | Status | Where to show |
+| --- | --- | --- |
+| Unified application logic | Satisfied | `src/context/RecipeContext.jsx`, `src/pages/Recipes.jsx` |
+| Complete UI | Satisfied | `src/components/Header.jsx`, `src/components/NavBar.jsx`, `src/pages/Home.jsx`, `src/pages/Recipes.jsx`, `src/pages/Profile.jsx` |
+| Complete user flow | Satisfied | `src/pages/Recipes.jsx`, `src/components/RecipeForm.jsx`, `src/components/RecipeModal.jsx` |
+| Functionally complete | Satisfied | add/edit/delete/favorite/like/filter/sort/profile stats |
+| Modern React standards | Satisfied | functional components, hooks, Context API, Router, memoization, tests |
+| React Router used | Satisfied | `src/main.jsx`, `src/App.jsx`, `src/components/NavBar.jsx` |
+| Context API used | Satisfied | `src/context/RecipeContext.jsx`, `src/context/AuthContext.jsx` |
+| State management used | Satisfied | `src/context/RecipeContext.jsx`, local `useState` in forms/modals/pages |
+| Project runs | Satisfied | `npm.cmd run dev`, `npm.cmd run build`, `npm.cmd test -- --run` |
 
+## Assessment Checklist
 
+### 2.1 Project Architecture and Structure
 
+The project is organized into clear folders:
 
-# ============================
+- `src/components` - reusable UI parts such as `RecipeForm`, `RecipeModal`, `RecipeCardCompound`, `Filters`, `Header`, `NavBar`.
+- `src/pages` - route-level pages: `Home`, `Recipes`, `Profile`, `NotFound`.
+- `src/context` - global state: `RecipeContext`, `AuthContext`.
+- `src/hooks` - reusable logic: `useFetch`, `useForm`, `useFilter`.
+- `src/services` - API/data transformation logic: `recipeApi.js`.
+- `src/test` and `*.test.jsx` - testing setup and test coverage.
 
-Задача два. Higher Order Component для авторизации
-Тема: Higher Order Components
-Условие:
-Создать HOC с проверкой авторизации пользователя. Компонент должен оборачивать
-страницы или компоненты и отображать доступ только авторизованным пользователям,
-остальные видят сообщение об ограничении доступа.
-Входные данные: флаг isAuthenticated в глобальном состоянии
-Выходные данные: отображение компонента или сообщения об ограничении
+I separated page-level components, reusable UI components, hooks, context, and services. This makes the project scalable because UI, state, side effects, and API mapping are not mixed into one file.
 
-A Higher-Order Component (HOC) in React is an advanced pattern for reusing component logic. It is a function that takes a component as an argument and returns a new, enhanced component, enabling code reuse, cleaner structure, and separation of concerns.
+### 2.2 React JSX, Components, Props
 
+Important files:
 
-Файлы:
-Новый: src/context/AuthContext.jsx
-Новый: src/hoc/withAuth.jsx
-Изменён: src/pages/Profile.jsx
+- `src/pages/Recipes.jsx` passes recipe data and handlers into `RecipeCardCompound`.
+- `src/components/RecipeCardCompound.jsx` uses a compound component pattern: `Header`, `Body`, `Footer`.
+- `src/components/Filters.jsx` receives filter state and setter functions through props.
+- `src/components/RecipeListRenderProps.jsx` demonstrates the render props pattern.
 
-Добавлен глобальный AuthContext
-Создан HOC withAuth
-Страница Profile обёрнута в HOC
+The interface is decomposed into reusable components. Components receive data through props, while recipe data itself comes from Context and services rather than being hardcoded inside the cards.
 
-Как работает:
-Если isAuthenticated === false → показывается сообщение «Доступ ограничен» + кнопка «Войти».
-Если true → отображается профиль.
-В main.jsx добавлен <AuthProvider>.
+### 2.3 State Management
 
-# ===========================================
-Задача три. Compound Components для карточек
-Тема: Compound Components
-Условие:
-Создать компонент карточки, который состоит из дочерних компонентов Header, Body и
-Footer. Карточка должна быть управляемой через Context внутри компонента, чтобы
-дочерние элементы могли обмениваться состоянием, например открытие модального
-окна или отметка выполнено.
-Входные данные: массив элементов и действия пользователя
-Выходные данные: карточки отображаются, дочерние компоненты корректно
-взаимодействуют друг с другом
+Important files:
 
+- `src/context/RecipeContext.jsx` stores global recipe state and exposes `addRecipe`, `updateRecipe`, `deleteRecipe`, `toggleFavorite`, and `incrementLikes`.
+- `src/context/AuthContext.jsx` stores authentication state for the protected profile page.
+- `src/pages/Recipes.jsx` uses local state for selected recipe and add-recipe modal.
+- `src/components/RecipeForm.jsx` uses local state for validation errors.
+- `src/components/RecipeModal.jsx` uses local state for edit mode and edited recipe values.
 
+Global state is placed in Context because recipes are used across the header, recipes page, modal, form, and profile statistics. Local UI state stays inside the component where it belongs.
 
+### 2.4 useEffect and Side Effects
 
-Файлы:
+Important files:
 
-Новый: src/components/RecipeCardCompound.jsx
+- `src/hooks/useFetch.jsx` uses `useEffect` to fetch external API data and cleans up with `AbortController`.
+- `src/context/RecipeContext.jsx` uses `useEffect` to load recipes from `localStorage`, merge API data, and save state changes.
 
-Карточка рецепта разбита на составные части: Header, Body, Footer.
-Внутри используется внутренний CardContext.
-Как работает:
-jsx<RecipeCardCompound recipe={recipe} onClick={...}>
-  <RecipeCardCompound.Header />
-  <RecipeCardCompound.Body />
-  <RecipeCardCompound.Footer ... />
-</RecipeCardCompound>
-Дочерние компоненты общаются через Context (например, состояние избранного).
+Side effects are isolated. The fetch hook handles loading, error, data, and cleanup. The context synchronizes recipe state with localStorage and API data.
 
+### 2.5 Forms and Validation
 
+Important file:
 
-# ====================================
-Задача четыре. Controlled and Uncontrolled Hybrid Components
-Тема: Forms and Controlled Components
-Условие:
-Создать форму, часть полей которой управляется через состояние компонента, а часть
-через рефы. Реализовать синхронизацию данных и корректную валидацию для обоих
-типов полей.
-Входные данные: ввод данных в поля формы
-Выходные данные: состояние формы обновляется и валидация срабатывает корректно
+- `src/components/RecipeForm.jsx`
 
+Implemented:
 
+- Controlled fields for title, category, rating, ingredients, instructions, tags.
+- Validation for required fields.
+- Rating validation from 1 to 5.
+- Real-time validation through `handleValidatedChange`.
+- Submit validation before calling `addRecipe`.
+- Uncontrolled image URL field with `useRef`.
 
-Файлы:
+The form uses controlled inputs for main recipe data, shows validation errors, prevents invalid submission, and then writes valid data into global Context.
 
-Изменён: src/components/RecipeForm.jsx
+### 2.6 React Router
 
-Большинство полей — controlled (через useForm)
-Поле «Ссылка на фото» — uncontrolled (через useRef)
+Important files:
 
-Как работает:
-jsxconst imageRef = useRef(null);
-// ...
-<input ref={imageRef} defaultValue={form.image} />
-При submit значение берётся из imageRef.current.value.
+- `src/main.jsx` wraps the app in `BrowserRouter`.
+- `src/App.jsx` defines routes for `/`, `/recipes`, `/profile`, and `*`.
+- `src/components/NavBar.jsx` uses `NavLink` for navigation without page reloads.
+- `src/pages/NotFound.jsx` handles unknown routes.
 
+Routing is fully implemented with multiple pages and a NotFound route. Navigation is client-side using NavLink.
 
-# =======================================================
-Задача пять. Lazy Compound Components
-Тема: Compound Components и Lazy Loading
-Условие:
-Разделить крупные компоненты карточек и модальные окна на отдельные ленивые
-компоненты. Использовать React.lazy и Suspense для их загрузки только при
-необходимости.
-Входные данные: открытие модального окна или рендер карточки
-Выходные данные: компонент загружается динамически без замедления интерфейса
+### 2.7 Custom Hooks
 
+Important files:
 
+- `src/hooks/useForm.jsx` manages form state and reusable form handlers.
+- `src/hooks/useFetch.jsx` handles API loading, error, data, and cleanup.
+- `src/hooks/useFilter.jsx` filters and sorts recipes using `useMemo`.
 
-Файлы:
+I extracted reusable logic into custom hooks, so components stay focused on rendering and user interaction.
 
-Изменён: src/pages/Recipes.jsx
+### 2.8 API Integration
 
-Модальное окно деталей рецепта сделано ленивым (React.lazy + Suspense).
-Как работает:
-jsxconst LazyRecipeModal = lazy(() => import('../components/RecipeModal'))
+Important files:
 
-{selectedRecipe && (
-  <Suspense fallback={<div>Загрузка рецепта...</div>}>
-    <LazyRecipeModal ... />
-  </Suspense>
-)}
-Модалка загружается только при открытии карточки.
+- `src/hooks/useFetch.jsx` performs the fetch.
+- `src/services/recipeApi.js` stores `MEALDB_SEARCH_URL`, initial recipes, and maps API meals into app recipe objects.
+- `src/context/RecipeContext.jsx` calls `useFetch`, merges API recipes with saved recipes, and synchronizes them with global state.
 
+The project uses TheMealDB API. API data is transformed in a service file, then merged into Context state. Loading state is shown on the recipes page.
 
+### 2.9 Performance Optimization
 
-# ===============================================
-Задача шесть. Тестирование Render Props
-Тема: Testing React Applications
-Условие:
-Написать тесты для компонента с Render Props. Проверить, что функция рендера
-вызывается с правильными параметрами и интерфейс обновляется корректно при
-изменении состояния.
-Входные данные: имитация изменения состояния
-Выходные данные: интерфейс отображает корректные данные, функция рендера
-вызывается с правильными аргументами
+Important files:
 
+- `src/components/RecipeCardCompound.jsx` uses `React.memo`.
+- `src/components/RecipeCard.jsx` also uses `memo`.
+- `src/hooks/useFilter.jsx` uses `useMemo` to avoid recalculating filtered lists unnecessarily.
+- `src/pages/Recipes.jsx` uses `useCallback` for recipe click handling.
+- `src/App.jsx` and `src/pages/Recipes.jsx` use `lazy` and `Suspense` for code splitting.
 
-Тестирование Render Props → src/components/RecipeListRenderProps.test.jsx
+The app avoids unnecessary rendering with memoized cards, memoized filtering, callback memoization, and lazy loading.
 
+### 2.10 UI/UX and Visual Design
 
-# ===============================================
-Задача семь. Тестирование Higher Order Component
-Тема: Testing React Applications
-Условие:
-Написать тесты для HOC авторизации. Проверить, что авторизованный пользователь
-видит компонент, а неавторизованный видит сообщение об ограничении доступа.
-Входные данные: флаг isAuthenticated true и false
-Выходные данные: компонент отображается согласно состоянию авторизации
+Important files:
 
+- `src/components/Header.jsx`
+- `src/components/NavBar.jsx`
+- `src/components/Filters.jsx`
+- `src/components/RecipeCardCompound.jsx`
+- `src/components/RecipeForm.jsx`
+- `src/components/RecipeModal.jsx`
+- `src/pages/Profile.jsx`
 
-Тестирование HOC → src/hoc/withAuth.test.jsx
+Implemented:
 
+- Consistent orange/white recipe-book style.
+- Responsive grid layouts with `grid-cols-1`, `md:grid-cols-2`, `lg:grid-cols-3`.
+- Flexbox layouts for headers, buttons, stats, and modal actions.
+- Hover effects and transitions on buttons/cards.
+- Modal workflow for add/edit/detail.
 
-# ===============================================
-Задача восемь. Тестирование Compound Components
-Тема: Testing React Applications
-Условие:
-Написать тесты для карточек с Compound Components. Проверить взаимодействие
-дочерних компонентов, открытие модального окна, отметку элементов и правильное
-отображение информации.
+The UI is responsive, consistent, and supports a complete workflow from browsing to editing recipes.
 
-Входные данные: клики и изменения состояния
-Выходные данные: дочерние компоненты реагируют корректно, интерфейс
-обновляется
+### 2.10 Testing
 
+Important files:
 
+- `src/hooks/useForm.test.jsx`
+- `src/components/RecipeCardCompound.test.jsx`
+- `src/components/RecipeFormHybrid.test.jsx`
+- `src/components/RecipeListRenderProps.test.jsx`
+- `src/test/setup.js`
+- `vite.config.js`
 
+Implemented tests:
 
-Тестирование Compound Components → src/components/RecipeCardCompound.test.jsx
+- `useForm` initialization, change, reset, submit behavior.
+- `RecipeCardCompound` rendering and action callbacks.
+- `RecipeForm` validation and successful submission.
+- `RecipeListRenderProps` filtering behavior.
 
-# ===========================================
-Задача девять. Тестирование формы с гибридными компонентами
-Тема: Testing React Applications
-Условие:
-Написать тесты для формы с управляемыми и неуправляемыми полями. Проверить
-корректность синхронизации данных и валидации.
-Входные данные: ввод данных и сброс формы
-Выходные данные: состояние формы корректно обновляется, ошибки отображаются
-корректно
+Tests use Vitest and React Testing Library. They cover key hooks and user-facing components.
 
+Run tests:
 
-Тестирование гибридной формы → src/components/RecipeForm.test.jsx (обновлённый)
+```bash
+npm.cmd test -- --run
+```
 
+## Commands to Demonstrate
 
-# ============================================
-Задача десять. Интеграционное тестирование проекта
-Тема: Testing React Applications
-Условие:
-Написать интеграционные тесты для страницы проекта. Проверить добавление,
-редактирование, удаление элементов, фильтры, сортировку и отображение модальных
-окон. Использовать mock API для имитации асинхронных действий.
-Входные данные: действия пользователя по интерфейсу
-Выходные данные: состояние интерфейса и данных обновляется корректно, все
-элементы отображаются согласно ожиданиям
-
-
-Интеграционное тестирование страницы Recipes → src/pages/Recipes.test.jsx
-
-
-
-
-Все тесты проверяют:
-
-Корректную передачу данных в render prop
-Поведение HOC при isAuthenticated: true/false
-Взаимодействие дочерних компонентов Compound Card
-Синхронизацию controlled + uncontrolled полей
-Полный цикл: добавление → фильтрация → открытие модалки
+```bash
+npm.cmd install
+npm.cmd run dev
+npm.cmd test -- --run
+npm.cmd run lint
+npm.cmd run build
+```
