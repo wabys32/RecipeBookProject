@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react'
-import { useForm } from './useForm'
 import { vi } from 'vitest'
+import { useForm } from './useForm'
 
 describe('useForm custom hook', () => {
     const initialForm = {
@@ -11,55 +11,49 @@ describe('useForm custom hook', () => {
         instructions: ''
     }
 
-    it('должен инициализировать форму с начальными значениями', () => {
+    it('initializes the form with initial values', () => {
         const { result } = renderHook(() => useForm(initialForm))
+
         expect(result.current.form).toEqual(initialForm)
     })
 
-    it('должен обновлять поля при handleChange', () => {
+    it('updates fields with handleChange', () => {
         const { result } = renderHook(() => useForm(initialForm))
 
         act(() => {
-            const fakeEvent = { target: { name: 'title', value: 'Новый рецепт' } }
-            result.current.handleChange(fakeEvent)
+            result.current.handleChange({ target: { name: 'title', value: 'New recipe' } })
         })
 
-        expect(result.current.form.title).toBe('Новый рецепт')
+        expect(result.current.form.title).toBe('New recipe')
     })
 
-    it('должен сбрасывать форму в начальное состояние', () => {
+    it('resets the form to the initial state', () => {
         const { result } = renderHook(() => useForm(initialForm))
 
         act(() => {
-            const fakeEvent = { target: { name: 'title', value: 'Тест' } }
-            result.current.handleChange(fakeEvent)
-        })
-
-        act(() => {
+            result.current.setField('title', 'Pancakes')
             result.current.resetForm()
         })
 
         expect(result.current.form).toEqual(initialForm)
     })
 
-    it('должен вызывать onSubmit с текущими данными формы', () => {
-        
-
+    it('passes current form data to a submit callback', () => {
         const mockSubmit = vi.fn()
         const { result } = renderHook(() => useForm(initialForm))
 
         act(() => {
-            result.current.setField('title', 'Панкейки')
+            result.current.setField('title', 'Pancakes')
             result.current.setField('rating', '4.8')
         })
 
         act(() => {
             const submitHandler = result.current.handleSubmit(mockSubmit)
-            submitHandler({ preventDefault: jest.fn() })
+            submitHandler({ preventDefault: vi.fn() })
         })
 
         expect(mockSubmit).toHaveBeenCalledWith({
-            title: 'Панкейки',
+            title: 'Pancakes',
             category: 'Breakfast',
             rating: '4.8',
             ingredients: '',

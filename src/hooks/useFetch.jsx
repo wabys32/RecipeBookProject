@@ -6,22 +6,32 @@ export const useFetch = (url) => {
     const [error, setError] = useState(null)
 
     useEffect(() => {
+        const controller = new AbortController()
+
         const fetchData = async () => {
             setIsLoading(true)
             setError(null)
+
             try {
-                const response = await fetch(url)
-                if (!response.ok) throw new Error('Не удалось загрузить данные')
+                const response = await fetch(url, { signal: controller.signal })
+                if (!response.ok) throw new Error('Could not load recipe data')
+
                 const result = await response.json()
                 setData(result)
             } catch (err) {
-                setError(err.message)
+                if (err.name !== 'AbortError') {
+                    setError(err.message)
+                }
             } finally {
-                setIsLoading(false)
+                if (!controller.signal.aborted) {
+                    setIsLoading(false)
+                }
             }
         }
 
         if (url) fetchData()
+
+        return () => controller.abort()
     }, [url])
 
     return { data, isLoading, error }

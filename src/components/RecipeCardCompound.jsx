@@ -1,15 +1,11 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, memo, useContext } from 'react'
 import { FiHeart, FiStar } from 'react-icons/fi'
 
 const CardContext = createContext()
 
-export default function RecipeCardCompound({ recipe, onClick, children }) {
-    const [isFavorite, setIsFavorite] = useState(recipe.isFavorite)
-
-    const toggleFavorite = () => setIsFavorite(!isFavorite)
-
+function RecipeCardCompound({ recipe, onClick, children }) {
     return (
-        <CardContext.Provider value={{ recipe, isFavorite, toggleFavorite, onClick }}>
+        <CardContext.Provider value={{ recipe, onClick }}>
             <div
                 onClick={onClick}
                 className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer group"
@@ -20,8 +16,10 @@ export default function RecipeCardCompound({ recipe, onClick, children }) {
     )
 }
 
-// Compound sub-components
-RecipeCardCompound.Header = function Header() {
+const MemoizedRecipeCardCompound = memo(RecipeCardCompound)
+export default MemoizedRecipeCardCompound
+
+MemoizedRecipeCardCompound.Header = function Header() {
     const { recipe } = useContext(CardContext)
     return (
         <div className="relative h-48 overflow-hidden">
@@ -29,14 +27,14 @@ RecipeCardCompound.Header = function Header() {
                 <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
             ) : (
                 <div className="w-full h-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
-                    <span className="text-white text-6xl opacity-30">🍳</span>
+                    <span className="text-white text-6xl opacity-30">Recipe</span>
                 </div>
             )}
         </div>
     )
 }
 
-RecipeCardCompound.Body = function Body() {
+MemoizedRecipeCardCompound.Body = function Body() {
     const { recipe } = useContext(CardContext)
     return (
         <div className="p-5">
@@ -54,19 +52,23 @@ RecipeCardCompound.Body = function Body() {
     )
 }
 
-RecipeCardCompound.Footer = function Footer({ onToggleFavorite, onIncrementLikes }) {
-    const { recipe, isFavorite, toggleFavorite } = useContext(CardContext)
+MemoizedRecipeCardCompound.Footer = function Footer({ onToggleFavorite, onIncrementLikes }) {
+    const { recipe } = useContext(CardContext)
     return (
         <div className="px-5 pb-5 flex justify-between items-center text-sm">
-            <span>Лайков: {recipe.likes}</span>
+            <span>Likes: {recipe.likes}</span>
             <div className="flex gap-3">
                 <button
-                    onClick={(e) => { e.stopPropagation(); toggleFavorite(); onToggleFavorite(recipe.id) }}
+                    type="button"
+                    aria-label={recipe.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                    onClick={(e) => { e.stopPropagation(); onToggleFavorite(recipe.id) }}
                     className="text-red-500"
                 >
-                    <FiHeart className={isFavorite ? 'fill-current' : ''} />
+                    <FiHeart className={recipe.isFavorite ? 'fill-current' : ''} />
                 </button>
                 <button
+                    type="button"
+                    aria-label="Like recipe"
                     onClick={(e) => { e.stopPropagation(); onIncrementLikes(recipe.id) }}
                     className="text-orange-600"
                 >

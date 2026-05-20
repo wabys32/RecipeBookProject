@@ -16,5 +16,19 @@ export const useForm = (initialForm = {}) => {
         setForm(initialForm)
     }
 
-    return { form, handleChange, setField, resetForm }
+    // testing
+    const handleSubmit = (onSubmitCallback) => (e) => {
+        e.preventDefault()
+        if (onSubmitCallback) {
+            onSubmitCallback(form)
+        }
+    }
+
+    return {
+        form,
+        handleChange,
+        setField,
+        resetForm,
+        handleSubmit   // return for tests
+    }
 }

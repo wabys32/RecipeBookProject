@@ -18,7 +18,7 @@ export default function RecipeModal({
 
     const handleSave = () => {
         if (!editedRecipe.title.trim() || !editedRecipe.instructions.trim()) {
-            alert('Название и инструкция обязательны')
+            alert('Title and instructions are required')
             return
         }
 
@@ -34,26 +34,32 @@ export default function RecipeModal({
         setIsEditing(false)
     }
 
+    const handleToggleFavorite = () => {
+        const nextRecipe = { ...editedRecipe, isFavorite: !editedRecipe.isFavorite }
+        setEditedRecipe(nextRecipe)
+        onToggleFavorite(recipe.id)
+    }
+
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl border border-gray-200">
-
-                {/* Header */}
                 <div className="sticky top-0 z-10 bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         {isEditing ? (
                             <>
                                 <FiEdit className="text-blue-600" size={24} />
-                                <h2 className="text-xl md:text-2xl font-bold">Редактирование рецепта</h2>
+                                <h2 className="text-xl md:text-2xl font-bold">Edit recipe</h2>
                             </>
                         ) : (
                             <h2 className="text-xl md:text-2xl font-bold truncate max-w-[70vw]">
-                                {recipe.title}
+                                {editedRecipe.title}
                             </h2>
                         )}
                     </div>
 
                     <button
+                        type="button"
+                        aria-label="Close recipe"
                         onClick={onClose}
                         className="p-2 rounded-full hover:bg-gray-100 transition"
                     >
@@ -62,11 +68,11 @@ export default function RecipeModal({
                 </div>
 
                 <div className="p-6 md:p-8">
-                    {recipe.image && (
+                    {editedRecipe.image && (
                         <div className="mb-6 rounded-xl overflow-hidden shadow-md">
                             <img
-                                src={recipe.image}
-                                alt={recipe.title}
+                                src={editedRecipe.image}
+                                alt={editedRecipe.title}
                                 className="w-full h-64 md:h-80 object-cover"
                                 onError={(e) => {
                                     e.target.src = 'https://images.unsplash.com/photo-1556911220-b0b895fafb40'
@@ -137,16 +143,18 @@ export default function RecipeModal({
 
                             <div className="flex gap-4 mt-8">
                                 <button
+                                    type="button"
                                     onClick={handleSave}
                                     className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg flex items-center justify-center gap-2"
                                 >
-                                    <FiSave /> Сохранить
+                                    <FiSave /> Save
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={handleCancel}
                                     className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg flex items-center justify-center gap-2"
                                 >
-                                    <FiArrowLeft /> Отмена
+                                    <FiArrowLeft /> Cancel
                                 </button>
                             </div>
                         </div>
@@ -154,54 +162,57 @@ export default function RecipeModal({
                         <div className="space-y-6">
                             <div className="flex flex-wrap gap-3">
                                 <span className="px-4 py-1.5 bg-orange-100 text-orange-800 rounded-full">
-                                    {recipe.category}
+                                    {editedRecipe.category}
                                 </span>
                                 <span className="px-4 py-1.5 bg-amber-100 text-amber-800 rounded-full flex items-center gap-1">
-                                    <FiHeart className="fill-current" /> {recipe.likes}
+                                    <FiHeart className="fill-current" /> {editedRecipe.likes}
                                 </span>
                                 <span className="px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full flex items-center gap-1">
                                     <FiStar className="fill-current" />
-                                    {Number(recipe.rating).toFixed(1)}   {/* ← SAFE FIX */}
+                                    {Number(editedRecipe.rating).toFixed(1)}
                                 </span>
                             </div>
 
                             <div className="bg-gray-50 p-5 rounded-xl whitespace-pre-line">
-                                {recipe.ingredients}
+                                {editedRecipe.ingredients}
                             </div>
 
                             <div className="bg-gray-50 p-5 rounded-xl whitespace-pre-line">
-                                {recipe.instructions}
+                                {editedRecipe.instructions}
                             </div>
 
                             <div className="flex flex-wrap gap-4 mt-10">
                                 <button
+                                    type="button"
                                     onClick={() => setIsEditing(true)}
                                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg flex items-center justify-center gap-2"
                                 >
-                                    <FiEdit /> Редактировать
+                                    <FiEdit /> Edit
                                 </button>
 
                                 <button
-                                    onClick={() => onToggleFavorite(recipe.id)}
-                                    className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 border-2 ${recipe.isFavorite
+                                    type="button"
+                                    onClick={handleToggleFavorite}
+                                    className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 border-2 ${editedRecipe.isFavorite
                                         ? 'border-red-500 text-red-600 hover:bg-red-50'
                                         : 'border-gray-400 hover:border-red-500 hover:text-red-600'
                                         }`}
                                 >
-                                    <FiHeart className={recipe.isFavorite ? 'fill-red-500' : ''} />
-                                    {recipe.isFavorite ? 'В избранном' : 'В избранное'}
+                                    <FiHeart className={editedRecipe.isFavorite ? 'fill-red-500' : ''} />
+                                    {editedRecipe.isFavorite ? 'Favorite' : 'Add to favorites'}
                                 </button>
 
                                 <button
+                                    type="button"
                                     onClick={() => {
-                                        if (window.confirm('Удалить рецепт навсегда?')) {
+                                        if (window.confirm('Delete this recipe permanently?')) {
                                             onDelete(recipe.id)
                                             onClose()
                                         }
                                     }}
                                     className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg flex items-center justify-center gap-2"
                                 >
-                                    <FiTrash2 /> Удалить
+                                    <FiTrash2 /> Delete
                                 </button>
                             </div>
                         </div>

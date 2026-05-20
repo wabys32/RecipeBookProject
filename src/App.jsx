@@ -13,7 +13,7 @@ function App() {
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <Header />
       <NavBar />
-      <Suspense fallback={<div className="text-center py-20 text-xl">Загружаем страницу...</div>}>
+      <Suspense fallback={<div className="text-center py-20 text-xl">Loading page...</div>}>
         <Routes>
           <Route path="/" element={<LazyHome />} />
           <Route path="/recipes" element={<LazyRecipes />} />

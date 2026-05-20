@@ -37,6 +37,7 @@ jsx<RecipeListRenderProps recipes={recipes}>
 Входные данные: флаг isAuthenticated в глобальном состоянии
 Выходные данные: отображение компонента или сообщения об ограничении
 
+A Higher-Order Component (HOC) in React is an advanced pattern for reusing component logic. It is a function that takes a component as an argument and returns a new, enhanced component, enabling code reuse, cleaner structure, and separation of concerns.
 
 
 Файлы:

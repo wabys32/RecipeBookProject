@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { RecipeContext } from '../context/RecipeContext'
-import { useFilter } from '../hooks/useFilter' 
-import RecipeCard from './RecipeCard'
+import { useFilter } from '../hooks/useFilter'
 import RecipeCardCompound from './RecipeCardCompound'
 
 export default function PageContent({
@@ -9,7 +8,6 @@ export default function PageContent({
 }) {
     const { recipes, toggleFavorite, incrementLikes } = useContext(RecipeContext)
 
-    // ===== TASK 3: useFilter custom hook =====
     const filteredRecipes = useFilter(recipes, {
         searchTerm,
         selectedCategory,
@@ -18,19 +16,12 @@ export default function PageContent({
     })
 
     if (filteredRecipes.length === 0) {
-        return <p className="text-center text-xl py-20 text-gray-500">Рецепты не найдены 😔</p>
+        return <p className="text-center text-xl py-20 text-gray-500">No recipes found.</p>
     }
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {filteredRecipes.map(recipe => (
-                // <RecipeCard
-                //     key={recipe.id}
-                //     recipe={recipe}
-                //     onClick={() => onRecipeClick(recipe)}
-                //     onToggleFavorite={toggleFavorite}
-                //     onIncrementLikes={incrementLikes}
-                // />
                 <RecipeCardCompound
                     key={recipe.id}
                     recipe={recipe}
@@ -39,8 +30,8 @@ export default function PageContent({
                     <RecipeCardCompound.Header />
                     <RecipeCardCompound.Body />
                     <RecipeCardCompound.Footer
-                        onToggleFavorite={onToggleFavorite}
-                        onIncrementLikes={onIncrementLikes}
+                        onToggleFavorite={toggleFavorite}
+                        onIncrementLikes={incrementLikes}
                     />
                 </RecipeCardCompound>
             ))}
