@@ -31,7 +31,7 @@ The project is organized into clear folders:
 - `src/services` - API/data transformation logic: `recipeApi.js`.
 - `src/test` and `*.test.jsx` - testing setup and test coverage.
 
-Say: "I separated page-level components, reusable UI components, hooks, context, and services. This makes the project scalable because UI, state, side effects, and API mapping are not mixed into one file."
+I separated page-level components, reusable UI components, hooks, context, and services. This makes the project scalable because UI, state, side effects, and API mapping are not mixed into one file.
 
 ### 2.2 React JSX, Components, Props
 
@@ -42,7 +42,7 @@ Important files:
 - `src/components/Filters.jsx` receives filter state and setter functions through props.
 - `src/components/RecipeListRenderProps.jsx` demonstrates the render props pattern.
 
-Say: "The interface is decomposed into reusable components. Components receive data through props, while recipe data itself comes from Context and services rather than being hardcoded inside the cards."
+The interface is decomposed into reusable components. Components receive data through props, while recipe data itself comes from Context and services rather than being hardcoded inside the cards.
 
 ### 2.3 State Management
 
@@ -54,7 +54,7 @@ Important files:
 - `src/components/RecipeForm.jsx` uses local state for validation errors.
 - `src/components/RecipeModal.jsx` uses local state for edit mode and edited recipe values.
 
-Say: "Global state is placed in Context because recipes are used across the header, recipes page, modal, form, and profile statistics. Local UI state stays inside the component where it belongs."
+Global state is placed in Context because recipes are used across the header, recipes page, modal, form, and profile statistics. Local UI state stays inside the component where it belongs.
 
 ### 2.4 useEffect and Side Effects
 
@@ -63,7 +63,7 @@ Important files:
 - `src/hooks/useFetch.jsx` uses `useEffect` to fetch external API data and cleans up with `AbortController`.
 - `src/context/RecipeContext.jsx` uses `useEffect` to load recipes from `localStorage`, merge API data, and save state changes.
 
-Say: "Side effects are isolated. The fetch hook handles loading, error, data, and cleanup. The context synchronizes recipe state with localStorage and API data."
+Side effects are isolated. The fetch hook handles loading, error, data, and cleanup. The context synchronizes recipe state with localStorage and API data.
 
 ### 2.5 Forms and Validation
 
@@ -80,7 +80,7 @@ Implemented:
 - Submit validation before calling `addRecipe`.
 - Uncontrolled image URL field with `useRef`.
 
-Say: "The form uses controlled inputs for main recipe data, shows validation errors, prevents invalid submission, and then writes valid data into global Context."
+The form uses controlled inputs for main recipe data, shows validation errors, prevents invalid submission, and then writes valid data into global Context.
 
 ### 2.6 React Router
 
@@ -91,7 +91,7 @@ Important files:
 - `src/components/NavBar.jsx` uses `NavLink` for navigation without page reloads.
 - `src/pages/NotFound.jsx` handles unknown routes.
 
-Say: "Routing is fully implemented with multiple pages and a NotFound route. Navigation is client-side using NavLink."
+Routing is fully implemented with multiple pages and a NotFound route. Navigation is client-side using NavLink.
 
 ### 2.7 Custom Hooks
 
@@ -101,7 +101,7 @@ Important files:
 - `src/hooks/useFetch.jsx` handles API loading, error, data, and cleanup.
 - `src/hooks/useFilter.jsx` filters and sorts recipes using `useMemo`.
 
-Say: "I extracted reusable logic into custom hooks, so components stay focused on rendering and user interaction."
+I extracted reusable logic into custom hooks, so components stay focused on rendering and user interaction.
 
 ### 2.8 API Integration
 
@@ -111,7 +111,7 @@ Important files:
 - `src/services/recipeApi.js` stores `MEALDB_SEARCH_URL`, initial recipes, and maps API meals into app recipe objects.
 - `src/context/RecipeContext.jsx` calls `useFetch`, merges API recipes with saved recipes, and synchronizes them with global state.
 
-Say: "The project uses TheMealDB API. API data is transformed in a service file, then merged into Context state. Loading state is shown on the recipes page."
+The project uses TheMealDB API. API data is transformed in a service file, then merged into Context state. Loading state is shown on the recipes page.
 
 ### 2.9 Performance Optimization
 
@@ -123,7 +123,7 @@ Important files:
 - `src/pages/Recipes.jsx` uses `useCallback` for recipe click handling.
 - `src/App.jsx` and `src/pages/Recipes.jsx` use `lazy` and `Suspense` for code splitting.
 
-Say: "The app avoids unnecessary rendering with memoized cards, memoized filtering, callback memoization, and lazy loading."
+The app avoids unnecessary rendering with memoized cards, memoized filtering, callback memoization, and lazy loading.
 
 ### 2.10 UI/UX and Visual Design
 
@@ -145,7 +145,7 @@ Implemented:
 - Hover effects and transitions on buttons/cards.
 - Modal workflow for add/edit/detail.
 
-Say: "The UI is responsive, consistent, and supports a complete workflow from browsing to editing recipes."
+The UI is responsive, consistent, and supports a complete workflow from browsing to editing recipes.
 
 ### 2.10 Testing
 
@@ -165,7 +165,7 @@ Implemented tests:
 - `RecipeForm` validation and successful submission.
 - `RecipeListRenderProps` filtering behavior.
 
-Say: "Tests use Vitest and React Testing Library. They cover key hooks and user-facing components."
+Tests use Vitest and React Testing Library. They cover key hooks and user-facing components.
 
 Run tests:
 
@@ -182,22 +182,3 @@ npm.cmd test -- --run
 npm.cmd run lint
 npm.cmd run build
 ```
-
-Note: If PowerShell blocks `npm`, use `npm.cmd`.
-
-## Suggested Live Demo Flow
-
-1. Open Home page and show the unified Recipe Book idea.
-2. Go to Recipes through the navigation bar.
-3. Show filters: search, category, sorting, favorites.
-4. Open a recipe card and show modal details.
-5. Edit a recipe and save it.
-6. Add a new recipe and show validation by submitting empty fields first.
-7. Like or favorite a recipe.
-8. Go to Profile, log in, and show total recipes, favorites, average rating, and most popular recipe.
-9. Open an invalid URL to show the NotFound page.
-10. Run `npm.cmd test -- --run` to prove tests pass.
-
-## Final Defense Sentence
-
-"This is not a set of separate tasks. It is one complete recipe book application where routing, global state, API data, custom hooks, forms, validation, filtering, modal editing, profile statistics, optimization, and tests all work together around one domain: managing recipes."
