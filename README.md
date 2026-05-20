@@ -31,7 +31,7 @@ The project is organized into clear folders:
 - `src/services` - API/data transformation logic: `recipeApi.js`.
 - `src/test` and `*.test.jsx` - testing setup and test coverage.
 
-I separated page-level components, reusable UI components, hooks, context, and services. This makes the project scalable because UI, state, side effects, and API mapping are not mixed into one file.
+We separated page-level components, reusable UI components, hooks, context, and services. This makes the project scalable because UI, state, side effects, and API mapping are not mixed into one file.
 
 ### 2.2 React JSX, Components, Props
 
@@ -101,7 +101,7 @@ Important files:
 - `src/hooks/useFetch.jsx` handles API loading, error, data, and cleanup.
 - `src/hooks/useFilter.jsx` filters and sorts recipes using `useMemo`.
 
-I extracted reusable logic into custom hooks, so components stay focused on rendering and user interaction.
+We extracted reusable logic into custom hooks, so components stay focused on rendering and user interaction.
 
 ### 2.8 API Integration
 
@@ -171,14 +171,4 @@ Run tests:
 
 ```bash
 npm.cmd test -- --run
-```
-
-## Commands to Demonstrate
-
-```bash
-npm.cmd install
-npm.cmd run dev
-npm.cmd test -- --run
-npm.cmd run lint
-npm.cmd run build
 ```
